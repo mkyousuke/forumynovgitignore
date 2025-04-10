@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actualités - CinéForum</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/actualites.css">
+</head>
+<body>
+  <header>
+    <button id="theme-toggle" aria-label="Changer de thème">🌙</button>
+    <a href="/profil" id="profil-link">
+      <img src="/static/images/profil.png" alt="Profil">
+    </a>
+    <h1>Actualités</h1>
+    <a href="/index" class="btn">Accueil</a>
+  </header>
+  <main class="container">
+    <section class="news-section">
+      <div class="slider-control-container">
+        <input type="range" id="slider-control" min="0" value="0">
+      </div>
+      <h2>Actualités Cinéma et Séries</h2>
+      <div class="news-slider">
+        {{range .Articles}}
+          <article class="news-item">
+            <h3>{{.Title}}</h3>
+            <div class="news-date">{{.PublishedAt}}</div>
+            <div class="tags">
+              <span class="tag">Actualité</span>
+            </div>
+            <p>{{.Description}}</p>
+            <a href="{{.URL}}" class="btn more-btn" target="_blank">Lire la suite</a>
+          </article>
+        {{end}}
+      </div>
+      {{if not .Articles}}
+        <p>Aucune actualité disponible pour le moment.</p>
+      {{end}}
+    </section>
+  </main>
+  <footer>
+    <p>© 2025 CinéForum - Tous droits réservés</p>
+  </footer>
+  <script>
+    const toggleBtn = document.getElementById('theme-toggle');
+    const body = document.body;
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      body.classList.add('dark-mode');
+      toggleBtn.textContent = '☀';
+    }
+    toggleBtn.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      if (body.classList.contains('dark-mode')) {
+        toggleBtn.textContent = '☀';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        toggleBtn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      }
+    });
+    const slider = document.querySelector('.news-slider');
+    const sliderControl = document.getElementById('slider-control');
+    let scrollAmount = 0;
+    let autoScrollInterval = setInterval(autoScroll, 50);
+    function updateSliderControlMax() {
+      if (slider && sliderControl) {
+        sliderControl.max = slider.scrollWidth - slider.clientWidth;
+      }
+    }
+    updateSliderControlMax();
+    window.addEventListener('resize', updateSliderControlMax);
+    function autoScroll() {
+      if (slider) {
+        scrollAmount += 1;
+        if (scrollAmount >= slider.scrollWidth - slider.clientWidth) {
+          scrollAmount = 0;
+        }
+        slider.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+        if (sliderControl) { sliderControl.value = scrollAmount; }
+      }
+    }
+    sliderControl.addEventListener('input', () => {
+      clearInterval(autoScrollInterval);
+      scrollAmount = parseInt(sliderControl.value);
+      slider.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+    });
+    sliderControl.addEventListener('change', () => {
+      setTimeout(() => { autoScrollInterval = setInterval(autoScroll, 50); }, 2000);
+    });
+    sliderControl.addEventListener('mousedown', () => { clearInterval(autoScrollInterval); });
+    sliderControl.addEventListener('mouseup', () => { setTimeout(() => { autoScrollInterval = setInterval(autoScroll, 50); }, 2000); });
+  </script>
+</body>
+</html>

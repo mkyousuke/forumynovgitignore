@@ -1,0 +1,232 @@
+@import url('/static/css/main.css');
+
+/* =============================
+   Modernisation de la page Posts (Glassmorphism)
+   ============================= */
+
+/* Variables supplémentaires pour un effet verre plus marqué */
+:root {
+  --surface-glass: rgba(255, 255, 255, 0.15); /* Pour l'effet translucide */
+  --border-glass: rgba(255, 255, 255, 0.2);
+  --shadow-glass: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --transition: 200ms ease;
+}
+
+/* -----------------------------
+   Header en Glassmorphism
+   ----------------------------- */
+header {
+  position: relative;
+  background: rgba(44, 62, 80, 0.75) !important;
+  color: #fff !important;
+  padding: 1rem !important;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+}
+
+header h1 {
+  margin: 0.5rem 0 !important;
+}
+
+/* Bouton de thème et lien profil */
+#theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fff !important;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+#theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+#profil-link {
+  position: absolute;
+  top: 20px;
+  right: 70px;
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+#profil-link img {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--secondary);
+}
+#profil-link:hover {
+  transform: scale(1.1);
+}
+body.dark-mode #profil-link img {
+  content: url('/static/images/profil-sombre.png');
+}
+
+/* Bouton Accueil (et autres liens de type .btn) */
+a.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background: var(--secondary);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: background var(--transition);
+}
+a.btn:hover {
+  background: var(--accent);
+}
+
+/* -----------------------------
+   Main Container en Glassmorphism
+   ----------------------------- */
+main.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: var(--surface-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  box-shadow: var(--shadow-glass);
+  transition: background var(--transition), box-shadow var(--transition);
+}
+body.dark-mode main.container {
+  background: rgba(42, 42, 42, 0.5);
+  box-shadow: none;
+}
+
+/* -----------------------------
+   Titre H2
+   ----------------------------- */
+h2 {
+  margin-top: 1rem;
+  color: #fff;
+}
+body.dark-mode h2 {
+  color: #f0f0f0;
+}
+
+/* -----------------------------
+   Table des posts (topic-list) en Glassmorphism
+   ----------------------------- */
+table.topic-list {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  background: var(--surface-glass);
+  border-radius: 8px;
+  box-shadow: var(--shadow-glass);
+  overflow: hidden;
+}
+table.topic-list th,
+table.topic-list td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+table.topic-list thead th {
+  background: var(--primary);
+  color: #fff;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+table.topic-list tbody tr:hover {
+  background: rgba(52, 152, 219, 0.07);
+}
+
+/* Mode sombre pour la table */
+body.dark-mode table.topic-list {
+  background: #2a2a2a;
+  box-shadow: none;
+}
+body.dark-mode table.topic-list th,
+body.dark-mode table.topic-list td {
+  color: #f0f0f0;
+  border-bottom: 1px solid #444444;
+}
+body.dark-mode table.topic-list thead th {
+  background: #333333;
+}
+body.dark-mode table.topic-list tbody tr:hover {
+  background: #333333;
+}
+
+/* Liens de titre de post */
+.post-title {
+  color: var(--secondary);
+  text-decoration: none;
+  font-weight: bold;
+}
+.post-title:hover {
+  text-decoration: underline;
+}
+body.dark-mode .post-title {
+  color: #f0f0f0;
+}
+
+/* -----------------------------
+   Footer en Glassmorphism
+   ----------------------------- */
+footer {
+  background: rgba(44, 62, 80, 0.75);
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+body.dark-mode footer {
+  background: #1c1c1c;
+}
+
+/* Header en Glassmorphism */
+header {
+  background: rgba(44, 62, 80, 0.75) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+}
+
+/* Main Container en Glassmorphism */
+main.container {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Table des posts en Glassmorphism */
+table.topic-list {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Footer en Glassmorphism */
+footer {
+  background: rgba(44, 62, 80, 0.75) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, a, span, td, th, label, input, button {
+  color: #fff !important;
+}

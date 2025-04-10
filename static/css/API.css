@@ -1,0 +1,120 @@
+.films-grid {
+    display: grid;
+    gap: var(--spacing);
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    width: min(100% - 2rem, 1200px);
+    margin: 0 auto;
+    padding: var(--spacing);
+}
+
+.film-card {
+    position: relative;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, var(--shadow-strength));
+    transition: transform var(--transition), box-shadow var(--transition);
+    overflow: hidden;
+    cursor: pointer;
+
+    animation: fadeInUp 0.8s ease forwards;
+    opacity: 0; 
+}
+.film-card:nth-child(even) { animation-delay: 0.2s; }
+.film-card:nth-child(odd)  { animation-delay: 0.4s; }
+
+/* Survol de la carte : léger zoom et ombre accentuée */
+.film-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, calc(var(--shadow-strength) + 0.05));
+}
+
+/* Image de l'affiche */
+.film-card img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+.film-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Contenu textuel du film */
+.film-content {
+    padding: var(--spacing);
+    background: var(--surface);
+}
+
+/* Titre du film */
+.film-title {
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.25rem);
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+/* Synopsis */
+.film-overview {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    line-height: 1.4;
+    max-height: 4.4em;       
+    overflow: hidden;        
+    text-overflow: ellipsis; 
+}
+
+/* Bouton "En savoir plus" */
+.more-btn {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--secondary);
+    color: #fff;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color var(--transition);
+}
+.more-btn:hover {
+    background-color: var(--accent);
+}
+
+/* Animation "fadeInUp" */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dark Mode Overrides */
+body.dark-mode .film-card {
+    background: var(--surface-dark, #2c3e50);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .film-content {
+    background: var(--surface-dark, #2c3e50);
+}
+
+body.dark-mode .film-title {
+    color: var(--text-light, #fff);
+}
+
+body.dark-mode .film-overview {
+    color: var(--text-light, #ddd);
+}
+
+body.dark-mode .more-btn {
+    background-color: var(--secondary-dark, #1abc9c);
+    color: #fff;
+}
+
+body.dark-mode .more-btn:hover {
+    background-color: var(--accent-dark, #e67e22);
+}

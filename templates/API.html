@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Films Populaires (TMDb)</title>
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/API.css">
+</head>
+<body class="api-page">
+    <header>
+        <h1>Films Populaires</h1>
+        <a href="/index" class="btn">Accueil</a>
+        <button id="theme-toggle" aria-label="Changer de thème">🌙</button>
+        <script src="/static/js/themeToggle.js"></script>
+    </header>
+
+    <main>
+        <div class="films-grid">
+            {{range .Results}}
+            <div class="film-card">
+                <img src="https://image.tmdb.org/t/p/w500{{.PosterPath}}" alt="{{.Title}}" />
+                <div class="film-content">
+                    <h2 class="film-title">{{.Title}}</h2>
+                    <p class="film-overview">{{.Overview}}</p>
+                    <a href="#" class="more-btn">En savoir plus</a>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 CinéForum - Tous droits réservés</p>
+    </footer>
+</body>
+</html>

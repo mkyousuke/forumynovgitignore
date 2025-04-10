@@ -1,0 +1,172 @@
+@import url('/static/css/main.css');
+
+/* Forcer toutes les écritures en blanc */
+body, h1, h2, h3, h4, h5, h6, p, a, span, td, th, label, input, button {
+  color: #fff !important;
+}
+
+/* ======================================================
+   Modernisation en Glassmorphism pour la page Post Detail
+   ====================================================== */
+
+/* Header en Glassmorphism */
+header {
+  background: rgba(44, 62, 80, 0.75) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  padding: 2rem !important;
+  text-align: center !important;
+}
+header h1 {
+  margin: 1rem 0 !important;
+  font-size: 2.2rem !important;
+}
+
+/* Bouton de thème */
+#theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fff !important;
+  transition: transform 0.2s ease;
+}
+#theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Lien vers le profil (sans bordure bleue) */
+#profil-link {
+  position: absolute;
+  top: 20px;
+  right: 80px;
+  width: 50px;
+  height: 50px;
+  transition: transform 0.2s ease;
+}
+#profil-link img {
+  display: block;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: none !important;
+}
+#profil-link:hover {
+  transform: scale(1.1);
+}
+body.dark-mode #profil-link img {
+  content: url('/static/images/profil-sombre.png');
+}
+
+/* Main container en Glassmorphism */
+main.container {
+  flex: 1;
+  width: calc(100% - 4rem);
+  margin: 2rem auto;
+  background: rgba(255,255,255,0.15) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  padding: 2rem !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+}
+body.dark-mode main.container {
+  background: #2a2a2a !important;
+  box-shadow: none !important;
+}
+
+/* Article en Glassmorphism */
+article {
+  margin-top: 2rem;
+  background: rgba(255,255,255,0.15) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  padding: 2rem !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+article img {
+  max-width: 100%;
+  margin-top: 1rem;
+  border-radius: 8px !important;
+}
+
+/* Boutons */
+a.btn {
+  display: inline-block;
+  padding: 12px 24px !important;
+  background: #3498db !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  border-radius: 4px !important;
+  font-weight: bold !important;
+  margin-top: 1rem !important;
+  transition: background 0.3s ease !important;
+  font-size: 1.1rem !important;
+}
+a.btn:hover {
+  background: #2980b9 !important;
+}
+
+/* Footer en Glassmorphism */
+footer {
+  background: rgba(44,62,80,0.75) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  color: #fff !important;
+  text-align: center !important;
+  padding: 2rem !important;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05) !important;
+  font-size: 1.1rem !important;
+}
+body.dark-mode footer {
+  background: #1c1c1c !important;
+}
+
+/* Section Commentaires en Glassmorphism */
+.comment-section {
+  margin-top: 2rem;
+  padding: 2rem !important;
+  background: rgba(255,255,255,0.15) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-radius: 8px !important;
+}
+.comment {
+  margin-bottom: 1.5rem !important;
+  padding: 1rem !important;
+  border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+}
+.comment:last-child {
+  border-bottom: none !important;
+}
+
+/* Like/Dislike and Emoji Buttons */
+.like-dislike-count {
+  display: inline-block;
+  margin-left: 5px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+.emoji-btn {
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.emoji-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Forcer le texte en blanc dans tout le document */
+* {
+  color: #fff !important;
+}

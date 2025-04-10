@@ -1,0 +1,37 @@
+Supprimer les utilisateurs de la base de données :sqlite3 forum.db puis DELETE FROM users;
+
+    Si probleme avec foreign key : 
+        PRAGMA foreign_keys = OFF;
+        DELETE FROM users;
+        PRAGMA foreign_keys = ON;
+
+NOM DE DOMAINE PUBLIC POUR TWITTER OAUTH : 
+
+Lancer le projet : go run .
+
+CLE API NEWS API : 902464a21b7e415b85363cd1fd4c11a8
+
+A FAIRE SI IL Y A L'ERREUR D'API KEY NON DEFINIE : 
+
+L'erreur "NEWSAPI_KEY non défini" signifie que la variable d'environnement n'est pas définie sur ton système Windows. Tu dois la définir avant de lancer ton serveur.
+
+Pour Windows (cmd) :
+
+```cmd
+set NEWSAPI_KEY=902464a21b7e415b85363cd1fd4c11a8
+go run main.go
+```
+
+Ou, si tu utilises PowerShell :
+
+```powershell
+$env:NEWSAPI_KEY="902464a21b7e415b85363cd1fd4c11a8"
+go run main.go
+```
+
+Pour Mac Os : 
+
+export NEWSAPI_KEY="902464a21b7e415b85363cd1fd4c11a8"
+go run main.go
+
+Assure-toi aussi que tu passes bien cette variable à ton processus si tu utilises un IDE ou un autre outil.

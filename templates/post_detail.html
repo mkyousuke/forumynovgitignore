@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Post.Title}} - CinéForum</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/post_detail.css">
+    <style>
+      /* --- Réglages de base pour agrandir l'affichage --- */
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        font-family: 'Roboto', sans-serif;
+        /* Augmentation de la taille de police globale */
+        font-size: 1.2rem;
+        background: url('/static/images/background.jpg.webp') no-repeat center center fixed;
+        background-size: cover;
+        color: var(--text);
+      }
+      body.dark-mode {
+        background: url('/static/images/background-sombre.jpeg') no-repeat center center fixed;
+        background-size: cover;
+        color: #f0f0f0;
+      }
+
+      /* --- Conteneur principal étendu pour occuper plus d'espace --- */
+      main.container {
+        flex: 1;
+        /* On utilise presque toute la largeur de la page */
+        width: calc(100% - 4rem);
+        margin: 2rem auto;
+        background: rgba(255,255,255,0.9);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      body.dark-mode main.container {
+        background: #2a2a2a;
+        box-shadow: none;
+      }
+
+      /* --- Header agrandi --- */
+      header {
+        position: relative;
+        background-color: #2c3e50;
+        color: #fff;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      }
+      header h1 {
+        margin: 1rem 0;
+        font-size: 2.2rem; /* Titre plus grand */
+      }
+
+      /* Bouton de thème agrandi */
+      #theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 2rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+        transition: transform 0.2s ease;
+      }
+      #theme-toggle:hover {
+        transform: scale(1.1);
+      }
+
+      /* Lien vers le profil agrandi */
+      #profil-link {
+        position: absolute;
+        top: 20px;
+        right: 80px;
+        width: 50px;
+        height: 50px;
+        transition: transform 0.2s ease;
+      }
+      #profil-link img {
+        display: block;
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid #3498db;
+      }
+      #profil-link:hover {
+        transform: scale(1.1);
+      }
+      body.dark-mode #profil-link img {
+        content: url('/static/images/profil-sombre.png');
+      }
+
+      /* --- Article du post agrandi --- */
+      article {
+        margin-top: 2rem;
+        background-color: var(--surface, #f5f5f5);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      article img {
+        max-width: 100%;
+        margin-top: 1rem;
+        border-radius: 8px;
+      }
+
+      /* Boutons plus grands */
+      a.btn {
+        display: inline-block;
+        padding: 12px 24px; /* Agrandit la zone cliquable */
+        background-color: #3498db;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        margin-top: 1rem;
+        transition: background-color 0.3s ease;
+        font-size: 1.1rem; /* Taille de police augmentée */
+      }
+      a.btn:hover {
+        background-color: #2980b9;
+      }
+      .btn-group {
+        margin-top: 1.5rem;
+      }
+      .btn-group a {
+        margin-right: 12px;
+      }
+
+      /* --- Footer agrandi --- */
+      footer {
+        background-color: #2c3e50;
+        color: #fff;
+        text-align: center;
+        padding: 2rem;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        font-size: 1.1rem;
+      }
+      body.dark-mode footer {
+        background-color: #1c1c1c;
+      }
+
+      /* --- Section commentaires agrandie --- */
+      .comment-section {
+        margin-top: 2rem;
+        padding: 2rem;
+        background-color: rgba(0,0,0,0.05);
+        border-radius: 8px;
+      }
+      .comment {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        border-bottom: 1px solid #ccc;
+      }
+      .comment:last-child {
+        border-bottom: none;
+      }
+
+      /* Like / Dislike agrandis */
+      .like-dislike-count {
+        display: inline-block;
+        margin-left: 5px;
+        font-weight: bold;
+        color: #555;
+        font-size: 1.1rem;
+      }
+      .emoji-btn {
+        background: none;
+        border: none;
+        font-size: 1.75rem; /* Émojis plus gros */
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+      .emoji-btn:hover {
+        transform: scale(1.2);
+      }
+
+      .profile-icon {
+        width: 60px;  
+        height: 60px; 
+        object-fit: cover;
+        border-radius: 50%;
+        margin-right: 12px;
+      }
+      .post-author, .comment-header {
+        display: flex;
+        align-items: center;
+      }
+      .post-author strong, .comment-header strong {
+        margin-right: 10px;
+      }
+      .comment-header p {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <button id="theme-toggle" aria-label="Changer de thème">🌙</button>
+      <a href="/profil" id="profil-link">
+        <img src="/static/images/profil/{{.UserPhoto}}" alt="Profil">
+      </a>
+      <h1>Post : {{.Post.Title}}</h1>
+    </header>
+
+    <main class="container">
+      <article>
+        <p class="post-author">
+          <img class="profile-icon" src="/static/images/profil/{{.UserPhoto}}" alt="Profil de {{.Post.Username}}">
+          <strong>Auteur :</strong> {{.Post.Username}}
+        </p>
+        <p><strong>Créé le :</strong> {{.Post.CreatedAt.Format "02/01/2006"}} à {{.Post.CreatedAt.Format "15:04:05"}}</p>
+        {{if .Post.ImagePath}}
+          <img src="/{{.Post.ImagePath}}" alt="Image du post">
+        {{end}}
+        {{if .Modified}}
+          <p><strong>Ancienne version :</strong><br>{{.Post.OriginalContent}}</p>
+          <p>
+            <strong>Version modifiée :</strong><br>
+            <i>{{.Post.Content}}</i>
+            <small>(Modifié le : {{.Post.ModifiedAt.Format "02/01/2006 15:04:05"}})</small>
+          </p>
+        {{else}}
+          <p style="margin-top:1rem;">{{.Post.Content}}</p>
+        {{end}}
+      </article>
+
+      {{if .Editable}}
+      <div style="margin-top:1rem;">
+        <a href="/edit-post?id={{.Post.ID}}" class="btn">Modifier</a>
+        <a href="/delete-post?id={{.Post.ID}}" class="btn" onclick="return confirm('Supprimer ce post ?');">Supprimer</a>
+      </div>
+      {{end}}
+
+      <div class="post-actions" style="margin-top:1rem;">
+        <form action="/like-post" method="post" style="display:inline;">
+          <input type="hidden" name="post_id" value="{{.Post.ID}}">
+          <button type="submit" class="emoji-btn" title="Like">👍</button>
+        </form>
+        <span class="like-dislike-count">{{.Post.Likes}}</span>
+        <form action="/dislike-post" method="post" style="display:inline; margin-left:10px;">
+          <input type="hidden" name="post_id" value="{{.Post.ID}}">
+          <button type="submit" class="emoji-btn" title="Dislike">👎</button>
+        </form>
+        <span class="like-dislike-count">{{.Post.Dislikes}}</span>
+      </div>
+
+      <div class="comment-section">
+        <h2>Commentaires</h2>
+        {{range .Comments}}
+          <div class="comment">
+            <div class="comment-header">
+              <img class="profile-icon" src="/static/images/profil/{{.Photo}}" alt="Profil de {{.Username}}">
+              <p><strong>{{.Username}}</strong> - {{.CreatedAt.Format "02/01/2006 15:04:05"}}</p>
+            </div>
+            <p>{{.Content}}</p>
+            <div class="comment-actions">
+              <form action="/like-comment" method="post" style="display:inline;">
+                <input type="hidden" name="comment_id" value="{{.ID}}">
+                <input type="hidden" name="post_id" value="{{$.Post.ID}}">
+                <button type="submit" class="emoji-btn" title="Like">👍</button>
+              </form>
+              <span class="like-dislike-count">{{.Likes}}</span>
+              <form action="/dislike-comment" method="post" style="display:inline; margin-left:10px;">
+                <input type="hidden" name="comment_id" value="{{.ID}}">
+                <input type="hidden" name="post_id" value="{{$.Post.ID}}">
+                <button type="submit" class="emoji-btn" title="Dislike">👎</button>
+              </form>
+              <span class="like-dislike-count">{{.Dislikes}}</span>
+            </div>
+            <a href="/delete-comment?id={{.ID}}&post_id={{$.Post.ID}}" class="btn" style="margin-top:5px;" onclick="return confirm('Supprimer ce commentaire ?');">Supprimer</a>
+          </div>
+        {{end}}
+        <form action="/add-comment" method="post" style="margin-top:1rem;">
+          <input type="hidden" name="post_id" value="{{.Post.ID}}">
+          <textarea name="content" rows="3" style="width:100%;" placeholder="Ajouter un commentaire" required></textarea>
+          <button type="submit" class="btn" style="margin-top:0.5rem;">Ajouter</button>
+        </form>
+      </div>
+
+      <div class="btn-group">
+        <a href="/posts" class="btn">Revenir aux posts</a>
+        <a href="/" class="btn">Revenir à l'accueil</a>
+      </div>
+    </main>
+
+    <footer>
+      <p>© 2025 CinéForum - Tous droits réservés</p>
+    </footer>
+
+    <script>
+      const toggleBtn = document.getElementById('theme-toggle');
+      const body = document.body;
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+        toggleBtn.textContent = '☀';
+      }
+      toggleBtn.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+          toggleBtn.textContent = '☀';
+          localStorage.setItem('theme', 'dark');
+        } else {
+          toggleBtn.textContent = '🌙';
+          localStorage.setItem('theme', 'light');
+        }
+      });
+    </script>
+  </body>
+</html>

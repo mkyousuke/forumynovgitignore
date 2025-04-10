@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts - CinéForum</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/posts.css">
+    <style>
+      body {
+        margin: 0;
+        background: url('/static/images/background.jpg.webp') no-repeat center center fixed;
+        background-size: cover;
+        color: var(--text);
+        line-height: 1.6;
+        font-family: 'Roboto', system-ui, sans-serif;
+        font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      }
+      body.dark-mode {
+        background: url('/static/images/background-sombre.jpeg') no-repeat center center fixed;
+        background-size: cover;
+        color: #f0f0f0 !important;
+      }
+      body.dark-mode header,
+      body.dark-mode footer {
+        background: #1c1c1c !important;
+        color: #f0f0f0 !important;
+      }
+      header {
+        position: relative;
+        background-color: #2c3e50;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+      header h1 {
+        margin: 0.5rem 0;
+      }
+      #theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: white;
+        text-align: center;
+        transition: transform 0.2s ease;
+      }
+      #theme-toggle:hover {
+        transform: scale(1.1);
+      }
+      #profil-link {
+        position: absolute;
+        top: 20px;
+        right: 70px;
+        width: 40px;
+        height: 40px;
+        display: inline-block;
+        transition: transform 0.2s ease;
+      }
+      #profil-link img {
+        display: block;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none !important;
+        outline: none !important;
+      }
+      #profil-link:hover {
+        transform: scale(1.1);
+      }
+      body.dark-mode #profil-link img {
+        content: url('/static/images/profil-sombre.png');
+      }
+      main.container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      body.dark-mode main.container {
+        background: #2a2a2a;
+        box-shadow: none;
+      }
+      a.btn {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        margin-top: 10px;
+        transition: background-color 0.3s ease;
+      }
+      a.btn:hover {
+        background-color: #2980b9;
+      }
+      h2 {
+        margin-top: 1rem;
+        color: #2c3e50;
+      }
+      body.dark-mode h2 {
+        color: #f0f0f0;
+      }
+      table.topic-list {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        background-color: var(--surface);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      body.dark-mode table.topic-list {
+        background-color: #2a2a2a;
+        box-shadow: none;
+      }
+      table.topic-list th,
+      table.topic-list td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      }
+      body.dark-mode table.topic-list th,
+      body.dark-mode table.topic-list td {
+        color: #f0f0f0;
+        border-bottom: 1px solid #444444;
+      }
+      table.topic-list thead th {
+        background: var(--primary);
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      body.dark-mode table.topic-list thead th {
+        background: #333333;
+      }
+      table.topic-list tbody tr:hover {
+        background: rgba(52, 152, 219, 0.07);
+      }
+      body.dark-mode table.topic-list tbody tr:hover {
+        background: #333333;
+      }
+      .post-title {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .post-title:hover {
+        text-decoration: underline;
+      }
+      body.dark-mode .post-title {
+        color: #f0f0f0;
+      }
+      footer {
+        background-color: #2c3e50;
+        color: #fff;
+        text-align: center;
+        padding: 1rem;
+        margin-top: 2rem;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+      }
+      body.dark-mode footer {
+        background: #1c1c1c;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <button id="theme-toggle" aria-label="Changer de thème">🌙</button>
+      <a href="/profil" id="profil-link">
+        <img src="/static/images/profil.png" alt="Profil">
+      </a>
+      <h1>Posts</h1>
+    </header>
+    <main class="container">
+      <a href="/nouveau-post" class="btn">Créer un nouveau post</a>
+      <a href="/index" class="btn">Accueil</a>
+      <h2>Tous les posts</h2>
+      <table class="topic-list">
+        <thead>
+          <tr>
+            <th>TITRE</th>
+            <th>AUTEUR</th>
+            <th>DATE</th>
+            <th>HEURE</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ if .Posts }}
+            {{ range .Posts }}
+              <tr>
+                <td>
+                  {{ if .ImagePath }}
+                    <img src="/{{.ImagePath}}" alt="Image du post" style="max-width:50px; vertical-align:middle; margin-right:5px;">
+                  {{ end }}
+                  <a href="/post?id={{.ID}}" class="post-title">{{.Title}}</a>
+                </td>
+                <td>{{.Username}}</td>
+                <td>{{.CreatedAt.Format "02/01/2006"}}</td>
+                <td>{{.CreatedAt.Format "15:04:05"}}</td>
+              </tr>
+            {{ end }}
+          {{ else }}
+            <tr>
+              <td colspan="4">Aucun post pour le moment.</td>
+            </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </main>
+    <script>
+      const toggleBtn = document.getElementById('theme-toggle');
+      const body = document.body;
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+        toggleBtn.textContent = '☀'; 
+      }
+      toggleBtn.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+          toggleBtn.textContent = '☀';
+          localStorage.setItem('theme', 'dark');
+        } else {
+          toggleBtn.textContent = '🌙';
+          localStorage.setItem('theme', 'light');
+        }
+      });
+    </script>
+  </body>
+</html>

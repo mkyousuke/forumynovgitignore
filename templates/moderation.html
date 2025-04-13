@@ -1,0 +1,27 @@
+{{/* templates/moderation.html */}}
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><title>Modération</title></head>
+<body>
+  <h1>Modération des posts</h1>
+  {{if .PendingPosts}}
+    {{range .PendingPosts}}
+      <article style="border:1px solid #ccc; padding:1em; margin:1em 0;">
+        <h2>{{.Title}}</h2>
+        <p>{{.Content}}</p>
+        <form action="/moderation/approve" method="post" style="display:inline">
+          <input type="hidden" name="post_id" value="{{.ID}}">
+          <button type="submit">✅ Approuver</button>
+        </form>
+        <form action="/moderation/reject" method="post" style="display:inline">
+          <input type="hidden" name="post_id" value="{{.ID}}">
+          <button type="submit">❌ Rejeter</button>
+        </form>
+      </article>
+    {{end}}
+  {{else}}
+    <p>Aucun post en attente de validation.</p>
+  {{end}}
+  <p><a href="/index">← Retour à l’accueil</a></p>
+</body>
+</html>

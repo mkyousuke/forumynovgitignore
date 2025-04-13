@@ -1,0 +1,134 @@
+/* connexion.css */
+@import url('/static/css/main.css');
+
+/* Conteneur principal (optionnel, si tu veux centrer sur la page) */
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* ou calc(100vh - 80px) si vous avez un header */
+    padding: var(--spacing);
+}
+
+/* Formulaire commun: connexion (effet glassmorphism) */
+.auth-form {
+    background: rgba(255, 255, 255, 0.15);  /* fond semi-transparent */
+    /* Plus de bordure blanche */
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 500px;
+    /* Pour que tout le texte à l'intérieur soit blanc */
+    color: #fff;
+}
+
+.auth-form h2 {
+    margin-bottom: 1rem;
+    /* On force la couleur en blanc */
+    color: #fff;
+    text-align: center;
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+}
+
+.auth-form label {
+    display: block;
+    margin: 1rem 0 0.25rem;
+    font-weight: 500;
+    /* Couleur blanche */
+    color: #fff;
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="email"],
+.auth-form input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color var(--transition);
+    background: rgba(255, 255, 255, 0.25); /* légère transparence sur les inputs */
+    /* Couleur du texte en blanc */
+    color: #fff;
+}
+
+/* Placeholder en gris clair pour contraster */
+.auth-form input[type="text"]::placeholder,
+.auth-form input[type="email"]::placeholder,
+.auth-form input[type="password"]::placeholder {
+    color: #ddd;
+}
+
+.auth-form input[type="text"]:focus,
+.auth-form input[type="email"]:focus,
+.auth-form input[type="password"]:focus {
+    border-color: var(--accent);
+}
+
+.auth-form .btn-submit {
+    margin-top: 1.5rem;
+    width: 100%;
+    font-size: 1rem;
+    /* Couleur du texte du bouton déjà blanc via .btn dans main.css */
+}
+
+.auth-form .link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    /* Couleur blanche */
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-form .link:hover {
+    text-decoration: underline;
+}
+
+/* Style pour la zone de connexion OAuth */
+.oauth-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Titre "Se connecter plutôt avec :" en blanc */
+.oauth-container p.oauth-title {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    color: #fff;
+}
+
+.oauth-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.oauth-buttons a img {
+    height: 40px;   
+    width: auto;
+    object-fit: contain;
+    transition: transform 0.2s;
+    display: block;
+}
+
+.oauth-buttons a.btn-google img,
+.oauth-buttons a.btn-facebook img {
+    height: 20px;
+    width: auto;
+}
+
+.oauth-buttons a.btn-github img,
+.oauth-buttons a.btn-twitter img {
+    height: 28px;
+    width: auto;
+}
+
+.oauth-buttons a:hover img {
+    transform: scale(1.1);
+}

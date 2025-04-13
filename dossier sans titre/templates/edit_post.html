@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Post - CinéForum</title>
+    <link rel="stylesheet" href="/static/css/new_post.css">
+  </head>
+  <body>
+    <header style="position: relative; background-color: #2c3e50; color: #fff; padding: 1rem; text-align: center;">
+      <button id="theme-toggle" aria-label="Changer de thème">🌙</button>
+      <a href="/profil" id="profil-link">
+        <img src="/static/images/profil.png" alt="Profil">
+      </a>
+      <h1>Modifier Post</h1>
+      <a href="/index" class="btn">Accueil</a>
+    </header>
+    <main class="container">
+      <a href="/posts" class="btn">Retour aux posts</a>
+      <form action="/edit-post?id={{.ID}}" method="post" enctype="multipart/form-data" style="margin-top: 1rem;">
+        <div>
+          <label for="title">Vous ne pouvez pas modifier le titre d'un post.</label>
+        </div>
+        <div style="margin-top: 1rem;">
+          <label for="content">Contenu :</label>
+          <textarea id="content" name="content" rows="5" required>{{.Content}}</textarea>
+        </div>
+        <div style="margin-top: 1rem;">
+          <label for="image">Vous ne pouvez pas modifier l'image d'un post.</label>
+        </div>
+        <button type="submit" class="btn" style="margin-top: 1rem;">Modifier le post</button>
+      </form>
+    </main>
+    <script>
+      const toggleBtn = document.getElementById('theme-toggle');
+      const body = document.body;
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+        toggleBtn.textContent = '☀';
+      }
+      toggleBtn.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+          toggleBtn.textContent = '☀';
+          localStorage.setItem('theme', 'dark');
+        } else {
+          toggleBtn.textContent = '🌙';
+          localStorage.setItem('theme', 'light');
+        }
+      });
+    </script>
+  </body>
+</html>

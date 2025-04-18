@@ -6,11 +6,12 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"forum/database"
 )
 
-// Fonction existante pour rendre un template
+// renderTemplate reste inchangé
 func renderTemplate(w http.ResponseWriter, r *http.Request, templateName string, data interface{}) {
 	templatePath := filepath.Join("templates", templateName)
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
@@ -19,71 +20,65 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, templateName string,
 	}
 	tmpl, err := template.ParseFiles(templatePath)
 	if err != nil {
-		http.Error(w, "Erreur lors du chargement du template: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Erreur chargement template: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		http.Error(w, "Erreur lors de l'exécution du template: "+err.Error(), http.StatusInternalServerError)
-		return
+	if err := tmpl.Execute(w, data); err != nil {
+		http.Error(w, "Erreur exécution template: "+err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func CritiquesAvisHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, r, "critiques-avis.html", nil)
-}
-
-func DiscussionsHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, r, "discussions.html", nil)
-}
-
-// --- Modification de IndexHandler ---
-// Ajout de la gestion du cookie user_id pour transmettre
-// les données IsLoggedIn et UserPhoto au template index.html.
+// IndexHandler gère deux checks séparés : user_id puis session_id
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	type IndexData struct {
-		IsLoggedIn bool
-		UserPhoto  string
+		IsLoggedIn  bool
+		PhotoURL    string
+		RecentPosts []database.Post
 	}
-	// Par défaut, on considère que l'utilisateur n'est pas connecté
 	data := IndexData{
-		IsLoggedIn: false,
-		UserPhoto:  "profil.png",
+		IsLoggedIn:  false,
+		PhotoURL:    "/static/images/profil/profil.png", // avatar par défaut
+		RecentPosts: nil,
 	}
-	cookie, err := r.Cookie("user_id")
-	if err == nil && cookie.Value != "" {
-		userID, err := strconv.Atoi(cookie.Value)
-		if err == nil {
-			user, err := database.GetUserByID(userID)
-			if err == nil {
+
+	// 1) On teste toujours d'abord le cookie user_id (fallback)
+	if c, err := r.Cookie("user_id"); err == nil && c.Value != "" {
+		if uid, err2 := strconv.Atoi(c.Value); err2 == nil {
+			if u, err3 := database.GetUserByID(uid); err3 == nil && u.Photo != "" {
 				data.IsLoggedIn = true
-				if user.Photo != "" {
-					data.UserPhoto = user.Photo
+				if strings.HasPrefix(u.Photo, "http") {
+					data.PhotoURL = u.Photo
+				} else {
+					data.PhotoURL = "/static/images/profil/" + u.Photo
 				}
 			}
 		}
 	}
+
+	// 2) Puis on teste la session (elle écrasera user_id si valide)
+	if sc, err := r.Cookie("session_id"); err == nil {
+		if uid, err2 := database.GetUserIDBySession(sc.Value); err2 == nil {
+			if u, err3 := database.GetUserByID(uid); err3 == nil && u.Photo != "" {
+				data.IsLoggedIn = true
+				if strings.HasPrefix(u.Photo, "http") {
+					data.PhotoURL = u.Photo
+				} else {
+					data.PhotoURL = "/static/images/profil/" + u.Photo
+				}
+			}
+		}
+	}
+
+	// 3) Récupérer les 3 derniers posts
+	if posts, err := database.GetRecentPosts(3); err == nil {
+		data.RecentPosts = posts
+	}
+
 	renderTemplate(w, r, "index.html", data)
 }
 
 func TheoriesSpoilersHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, r, "theoriesSpoilers.html", nil)
-}
-
-func AnimationsHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, r, "animations.html", nil)
-}
-
-func CritiquesAnalysesHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, r, "critiquesAnalyses.html", nil)
-}
-
-func FilmsHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, r, "films.html", nil)
-}
-
-func SeriesHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, r, "series.html", nil)
 }
 
 func RedirectToIndex(w http.ResponseWriter, r *http.Request) {

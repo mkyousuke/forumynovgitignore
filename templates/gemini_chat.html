@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pose tes questions à l'IA !</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/gemini.css">
+</head>
+<body>
+  <header>
+    <div class="container header-content">
+      <h1>Pose tes questions à l'IA !</h1>
+      <div class="header-buttons">
+        <a href="/" class="btn nav-btn">🏠 Accueil</a>
+        <button id="new-conversation-btn" class="btn nav-btn">🔄 Nouvelle conversation</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="chat-container"></div>
+
+  <form id="chat-form">
+    <input
+      type="text"
+      id="message"
+      placeholder="Pose ta question…"
+      autocomplete="off"
+      required
+    />
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <script src="/static/js/gemini_chat.js"></script>
+</body>
+</html>

@@ -1,187 +1,162 @@
 @import url('/static/css/main.css');
 
-@layer base {
-  :root {
-    --primary: #2c3e50;
-    --secondary: #3498db;
-    --accent: #2980b9;
-    --text: #fff;
-    --surface: rgba(255, 255, 255, 0.15);
-    --border: rgba(255, 255, 255, 0.2);
-    --shadow-strength: 0.05;
-    --radius: 8px;
-    --transition: 200ms ease;
-    --spacing: clamp(1rem, 2vw + 0.5rem, 1.5rem);
-  }
-  
-  /* Remplacement des couleurs de base */
-  body {
-    background: url('/static/images/background.jpg.webp') no-repeat center center fixed !important;
-    background-size: cover !important;
-    color: var(--text) !important;
-    font-family: 'Roboto', system-ui, sans-serif !important;
-  }
+/* === Styles scoped à la page notifications === */
+.notifications-page {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-@layer components {
-  /* Header en glassmorphism */
-  header {
-    background: rgba(44, 62, 80, 0.75) !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, var(--shadow-strength)) !important;
-    backdrop-filter: blur(5px) !important;
-    -webkit-backdrop-filter: blur(5px) !important;
-  }
-  header h1 {
-    font-size: clamp(1.75rem, 1.5rem + 1vw, 2.5rem) !important;
-    margin: 0 !important;
-    color: var(--text) !important;
-  }
-  /* Uniformisation des boutons du header */
-  header .btn {
-    background: transparent !important;
-    border: 2px solid #fff !important;
-    padding: 0.5em 1em !important;
-    border-radius: var(--radius) !important;
-    font-weight: 600 !important;
-    text-decoration: none !important;
-    transition: background var(--transition) !important;
-    color: var(--text) !important;
-  }
-  header .btn:hover {
-    background: rgba(255, 255, 255, 0.2) !important;
-  }
-  
-  /* Boutons et liens de thème, notifications et profil */
-  #theme-toggle {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 1.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text) !important;
-    transition: transform 0.2s ease;
-  }
-  #theme-toggle:hover {
-    transform: scale(1.1);
-  }
-  #notif-link {
-    position: absolute;
-    top: 20px;
-    right: 70px;
-    display: inline-block;
-    transition: transform 0.2s ease;
-  }
-  #notif-link img {
-    display: block;
-    width: 40px;
-    height: 40px;
-  }
-  #profil-link {
-    position: absolute;
-    top: 20px;
-    right: 120px;
-    display: inline-block;
-    transition: transform 0.2s ease;
-  }
-  #profil-link img {
-    display: block;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    /* Ligne supprimée :
-       border: 2px solid var(--secondary) !important; */
-  }
-  
-  /* Conteneur principal en glassmorphism */
-  main.container {
-    max-width: 800px !important;
-    margin: 2rem auto !important;
-    padding: var(--spacing) !important;
-    background: var(--surface) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: var(--radius) !important;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-  }
-  
-  /* Liste et items de notifications */
-  .notification-list {
-    margin-top: var(--spacing) !important;
-  }
-  .notification-item {
-    background: var(--surface) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: var(--radius) !important;
-    padding: 15px !important;
-    margin-bottom: 10px !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, var(--shadow-strength)) !important;
-  }
-  .notification-item h3 {
-    margin: 0 0 5px !important;
-    font-size: 1rem !important;
-  }
-  .notification-item a {
-    color: var(--secondary) !important;
-    text-decoration: none !important;
-  }
-  .notification-item a:hover {
-    text-decoration: underline !important;
-  }
-  .notification-item time {
-    font-size: 0.8rem !important;
-    color: #ccc !important;
-  }
-  
-  /* Bouton du formulaire */
-  form .btn {
-    display: inline-block;
-    padding: 8px 16px;
-    background-color: var(--secondary) !important;
-    color: var(--text) !important;
-    text-decoration: none !important;
-    border-radius: 4px !important;
-    font-weight: bold !important;
-    margin-bottom: 20px !important;
-    transition: background-color 0.3s ease !important;
-  }
-  form .btn:hover {
-    background-color: var(--accent) !important;
-  }
-  
-  /* Footer en glassmorphism */
-  footer {
-    background: rgba(44, 62, 80, 0.75) !important;
-    color: var(--text) !important;
-    text-align: center !important;
-    padding: 10px !important;
-    margin-top: 20px !important;
-    /* Conserver la position statique pour ne pas interférer avec la structure HTML existante */
-    position: static !important;
-    backdrop-filter: blur(5px) !important;
-    -webkit-backdrop-filter: blur(5px) !important;
-  }
+/* --- Header transparent en glassmorphism --- */
+.notifications-page header {
+  position: relative;
+  background: transparent !important;
+  color: #fff !important;
+  padding: 20px !important;
+  text-align: center !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+.notifications-page header h1 {
+  margin: 0 !important;
+  font-size: clamp(1.75rem, 1.5rem + 1vw, 2.5rem) !important;
 }
 
-@layer utilities {
-  /* Ajoutez ici des classes utilitaires supplémentaires si besoin */
+/* --- Boutons génériques --- */
+.notifications-page .btn {
+  display: inline-block !important;
+  padding: 8px 16px !important;
+  background-color: var(--secondary) !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  border-radius: var(--radius) !important;
+  font-weight: bold !important;
+  transition: background-color var(--transition) !important;
+}
+.notifications-page .btn:hover {
+  background-color: var(--accent) !important;
 }
 
-/* Responsive Design */
+/* --- Icônes thème / notifications / profil --- */
+.notifications-page #theme-toggle,
+.notifications-page #notif-link,
+.notifications-page #profil-link {
+  position: absolute !important;
+  top: 20px !important;
+  display: inline-block !important;
+  transition: transform 0.2s ease !important;
+  color: #fff !important;
+}
+.notifications-page #theme-toggle {
+  right: 20px !important;
+  font-size: 1.5rem !important;
+}
+.notifications-page #notif-link {
+  right: 70px !important;
+}
+.notifications-page #profil-link {
+  right: 120px !important;
+}
+.notifications-page #theme-toggle:hover,
+.notifications-page #notif-link:hover,
+.notifications-page #profil-link:hover {
+  transform: scale(1.1) !important;
+}
+.notifications-page #notif-link img,
+.notifications-page #profil-link img {
+  width: 40px !important;
+  height: 40px !important;
+  display: block !important;
+}
+.notifications-page #profil-link img {
+  border-radius: 50% !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* --- Conteneur principal en glassmorphism --- */
+.notifications-page main.container {
+  max-width: 800px !important;
+  margin: 2rem auto !important;
+  padding: var(--spacing) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: var(--radius) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* --- Liste de notifications --- */
+.notifications-page .notification-list {
+  margin-top: var(--spacing) !important;
+}
+
+/* --- Items de notification en glassmorphism --- */
+.notifications-page .notification-item {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+  border-radius: var(--radius) !important;
+  padding: 15px !important;
+  margin-bottom: 10px !important;
+}
+.notifications-page .notification-item h3 {
+  margin: 0 0 5px !important;
+  font-size: 1rem !important;
+  color: var(--primary) !important;
+}
+.notifications-page .notification-item a {
+  color: var(--secondary) !important;
+  text-decoration: none !important;
+}
+.notifications-page .notification-item a:hover {
+  text-decoration: underline !important;
+}
+.notifications-page .notification-item time {
+  font-size: 0.8rem !important;
+  color: var(--text-light) !important;
+}
+
+/* --- “Aucune notification…” stylé en glassmorphism aussi --- */
+.notifications-page .notification-list p {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+  border-radius: var(--radius) !important;
+  padding: 15px !important;
+  margin-bottom: 10px !important;
+  color: var(--text-light) !important;
+}
+
+/* --- Footer --- */
+.notifications-page footer {
+  background: var(--primary) !important;
+  color: #fff !important;
+  text-align: center !important;
+  padding: 10px !important;
+  margin-top: 20px !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+}
+
+/* --- Responsive --- */
 @media (max-width: 768px) {
-  main.container {
+  .notifications-page main.container {
     max-width: calc(100% - 2rem) !important;
     margin: 1rem auto !important;
   }
-  header nav {
+  .notifications-page header nav {
     flex-direction: column !important;
     gap: 0.5rem !important;
   }
-  #theme-toggle,
-  #notif-link,
-  #profil-link {
+  .notifications-page #theme-toggle,
+  .notifications-page #notif-link,
+  .notifications-page #profil-link {
     position: static !important;
     margin: 0.5rem !important;
   }

@@ -1,4 +1,4 @@
-<!-- fichier : profil.html (inchangé) -->
+<!-- templates/profil.html -->
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -18,10 +18,17 @@
       <section class="profile-container">
         <div class="profile-header">
           <div class="profile-photo">
-            <img src="/static/images/profil/{{.Photo}}" alt="Photo de profil">
+            <img
+              src="/static/images/profil/{{.Photo}}"
+              alt="Photo de profil"
+              onerror="this.onerror=null; this.src='/static/images/profil/default.png';"
+            >
           </div>
-          <a href="/modify-profil" class="btn">Modifier le nom d'utilisateur ou la photo de profil</a>
+          <a href="/modify-profil" class="btn">
+            Modifier le nom d'utilisateur ou la photo de profil
+          </a>
         </div>
+
         <div class="profile-info">
           <p><strong>ID :</strong> {{.ID}}</p>
           <p><strong>Nom d'utilisateur :</strong> {{.Username}}</p>
@@ -33,10 +40,16 @@
           <p><strong>Posts likés :</strong> {{.PostsLiked}}</p>
           <p><strong>Nombre de commentaires :</strong> {{.CommentsCount}}</p>
         </div>
+
+        {{ if eq .Role "admin" }}
+        <div class="admin-actions" style="margin-top:2rem;">
+          <h2>Actions administrateur</h2>
+          <a href="/moderation" class="btn">Modération des posts</a>
+          <a href="/admin/users" class="btn">Gestion des utilisateurs</a>
+        </div>
+        {{ end }}
+
       </section>
     </main>
-    <footer>
-      <p>© 2025 CinéForum - Tous droits réservés</p>
-    </footer>
   </body>
 </html>

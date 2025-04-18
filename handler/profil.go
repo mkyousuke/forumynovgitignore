@@ -1,3 +1,5 @@
+// handler/profil.go
+
 package handler
 
 import (
@@ -19,42 +21,70 @@ type ProfileData struct {
 }
 
 func ProfilHandler(w http.ResponseWriter, r *http.Request) {
+	// Connexion obligatoire
 	cookie, err := r.Cookie("user_id")
 	if err != nil {
 		http.Redirect(w, r, "/connexion", http.StatusSeeOther)
 		return
 	}
-	userID, err := strconv.Atoi(cookie.Value)
+	connectedID, err := strconv.Atoi(cookie.Value)
 	if err != nil {
 		http.Redirect(w, r, "/connexion", http.StatusSeeOther)
 		return
 	}
-	user, err := getUserByID(userID)
+
+	// Choix du profil à afficher
+	profileID := connectedID
+	if idParam := r.URL.Query().Get("id"); idParam != "" {
+		if pid, err := strconv.Atoi(idParam); err == nil {
+			profileID = pid
+		} else {
+			http.Error(w, "ID utilisateur invalide", http.StatusBadRequest)
+			return
+		}
+	}
+
+	// Récupération des données de base
+	user, err := getUserByID(profileID)
 	if err != nil {
 		fmt.Println("Erreur dans getUserByID:", err)
 		http.Error(w, "Erreur lors de la récupération du profil", http.StatusInternalServerError)
 		return
 	}
-	postsLiked, commentsCount, err := database.GetUserStats(userID)
+
+	// Récupérer le rôle pour afficher les boutons admin
+	if uwr, err := database.GetUserWithRole(profileID); err == nil {
+		user.Role = uwr.Role
+	}
+
+	// Statistiques
+	postsLiked, commentsCount, err := database.GetUserStats(profileID)
 	if err != nil {
 		postsLiked = 0
 		commentsCount = 0
 	}
-	lastPostTime, err := database.GetLastPostDate(userID)
+
+	// Dernier post
+	lastPostTime, err := database.GetLastPostDate(profileID)
 	lastPostStr := "Aucun post"
 	if err == nil && !lastPostTime.IsZero() {
 		lastPostStr = lastPostTime.Format("02/01/2006 15:04:05")
 	}
-	lastActivityTime, err := database.GetLastActivityDate(userID)
+
+	// Dernière activité
+	lastActivityTime, err := database.GetLastActivityDate(profileID)
 	lastActivityStr := "Aucune activité"
 	if err == nil && !lastActivityTime.IsZero() {
 		lastActivityStr = lastActivityTime.Format("02/01/2006 15:04:05")
 	}
-	lastConnectionTime, err := database.GetLastConnection(userID)
+
+	// Dernière connexion
+	lastConnectionTime, err := database.GetLastConnection(profileID)
 	lastConnectionStr := "Inconnue"
 	if err == nil && !lastConnectionTime.IsZero() {
 		lastConnectionStr = lastConnectionTime.Format("02/01/2006 15:04:05")
 	}
+
 	data := ProfileData{
 		User:               user,
 		PostsLiked:         postsLiked,
@@ -63,14 +93,14 @@ func ProfilHandler(w http.ResponseWriter, r *http.Request) {
 		LastActivityDate:   lastActivityStr,
 		LastConnectionDate: lastConnectionStr,
 	}
+
 	t, err := template.ParseFiles("templates/profil.html")
 	if err != nil {
 		fmt.Println("Erreur lors du parsing du template:", err)
 		http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
 		return
 	}
-	err = t.Execute(w, data)
-	if err != nil {
+	if err := t.Execute(w, data); err != nil {
 		fmt.Println("Erreur lors de l'exécution du template:", err)
 		http.Error(w, "Erreur lors de l'affichage du profil", http.StatusInternalServerError)
 		return
@@ -87,7 +117,7 @@ func getUserByID(id int) (database.User, error) {
 		return user, err
 	}
 	if user.Photo == "" {
-		user.Photo = "profil.png"
+		user.Photo = "default.png"
 	}
 	return user, nil
 }
@@ -103,6 +133,7 @@ func ModifyProfileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/connexion", http.StatusSeeOther)
 		return
 	}
+
 	if r.Method == http.MethodGet {
 		user, err := getUserByID(userID)
 		if err != nil {
@@ -115,6 +146,7 @@ func ModifyProfileHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		t.Execute(w, user)
+
 	} else if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
@@ -126,7 +158,7 @@ func ModifyProfileHandler(w http.ResponseWriter, r *http.Request) {
 		removePhoto := r.FormValue("remove_photo")
 
 		if removePhoto == "true" {
-			newPhoto = "profil.png"
+			newPhoto = "default.png"
 		}
 		if newUsername == "" {
 			http.Error(w, "Le nom d'utilisateur est requis", http.StatusBadRequest)
@@ -139,6 +171,7 @@ func ModifyProfileHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		http.Redirect(w, r, "/profil", http.StatusSeeOther)
+
 	} else {
 		http.Error(w, "Méthode non supportée", http.StatusMethodNotAllowed)
 	}

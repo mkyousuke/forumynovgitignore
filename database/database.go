@@ -1,3 +1,4 @@
+// database/database.go
 package database
 
 import (
@@ -143,9 +144,7 @@ type Post struct {
 	Dislikes        int
 }
 
-// CreatePost insère un post selon le rôle de l'auteur :
-// - "approved" pour admin/modérateur,
-// - "pending" pour un utilisateur normal.
+// CreatePost insère un post selon le rôle de l'auteur.
 func CreatePost(userID int, title, content, imagePath string) error {
 	user, err := GetUserWithRole(userID)
 	if err != nil {
@@ -183,6 +182,50 @@ func GetAllPosts() ([]Post, error) {
 		var createdAtStr, modifiedAtStr sql.NullString
 		if err := rows.Scan(&p.ID, &p.UserID, &p.Username, &p.Title, &p.Content, &p.OriginalContent, &p.ImagePath, &createdAtStr, &modifiedAtStr); err != nil {
 			return nil, fmt.Errorf("failed to scan post row: %w", err)
+		}
+		parsed, perr := time.Parse(time.RFC3339, createdAtStr.String)
+		if perr != nil {
+			parsed, _ = time.Parse("2006-01-02 15:04:05", createdAtStr.String)
+		}
+		p.CreatedAt = parsed.Add(2 * time.Hour)
+		if modifiedAtStr.Valid && modifiedAtStr.String != "" {
+			mparsed, merr := time.Parse(time.RFC3339, modifiedAtStr.String)
+			if merr != nil {
+				mparsed, _ = time.Parse("2006-01-02 15:04:05", modifiedAtStr.String)
+			}
+			p.ModifiedAt = mparsed.Add(2 * time.Hour)
+		}
+		p.Likes, _ = CountPostLikes(p.ID)
+		p.Dislikes, _ = CountPostDislikes(p.ID)
+		posts = append(posts, p)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("row iteration error: %w", err)
+	}
+	return posts, nil
+}
+
+// GetRecentPosts récupère les posts approuvés les plus récents.
+func GetRecentPosts(limit int) ([]Post, error) {
+	query := `
+		SELECT p.id, p.user_id, u.username, p.title, p.content, p.original_content, p.image_path, p.created_at, p.modified_at
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		WHERE p.moderation_status = 'approved'
+		ORDER BY p.created_at DESC
+		LIMIT ?;
+	`
+	rows, err := DB.Query(query, limit)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query recent posts: %w", err)
+	}
+	defer rows.Close()
+	var posts []Post
+	for rows.Next() {
+		var p Post
+		var createdAtStr, modifiedAtStr sql.NullString
+		if err := rows.Scan(&p.ID, &p.UserID, &p.Username, &p.Title, &p.Content, &p.OriginalContent, &p.ImagePath, &createdAtStr, &modifiedAtStr); err != nil {
+			return nil, fmt.Errorf("failed to scan recent post row: %w", err)
 		}
 		parsed, perr := time.Parse(time.RFC3339, createdAtStr.String)
 		if perr != nil {
@@ -311,7 +354,7 @@ type Comment struct {
 	CreatedAt time.Time
 	Likes     int
 	Dislikes  int
-	Photo     string // pour stocker la photo de l'utilisateur
+	Photo     string // photo de l'utilisateur
 }
 
 // CreateComment insère un nouveau commentaire.
@@ -328,7 +371,7 @@ func DeleteComment(commentID int, userID int) error {
 	return err
 }
 
-// AdminDeleteComment supprime un commentaire sans vérifier l'appartenance (pour admin/modérateur).
+// AdminDeleteComment supprime un commentaire sans vérifier l'appartenance.
 func AdminDeleteComment(commentID int) error {
 	query := "DELETE FROM comments WHERE id = ?;"
 	_, err := DB.Exec(query, commentID)
@@ -591,7 +634,7 @@ func GetLastLikeDate(userID int) (time.Time, error) {
 	return t, err
 }
 
-// GetLastActivityDate renvoie la date de la dernière activité (commentaire ou like) d'un utilisateur.
+// GetLastActivityDate renvoie la date de la dernière activité (commentaire ou like).
 func GetLastActivityDate(userID int) (time.Time, error) {
 	lastComment, err1 := GetLastCommentDate(userID)
 	lastLike, err2 := GetLastLikeDate(userID)
@@ -654,4 +697,39 @@ func GetPendingPosts() ([]Post, error) {
 		posts = append(posts, p)
 	}
 	return posts, nil
+}
+
+// --- Gestion des sessions ---
+  
+// CreateSession insère une session serveur pour un utilisateur.
+func CreateSession(sessionID string, userID int, expiresAt time.Time) error {
+	query := `INSERT INTO sessions (session_id, user_id, expires_at) VALUES (?, ?, ?);`
+	_, err := DB.Exec(query, sessionID, userID, expiresAt.Format("2006-01-02 15:04:05"))
+	return err
+}
+
+// GetUserIDBySession retourne l'ID utilisateur lié à une session, ou une erreur si expirée/inexistante.
+func GetUserIDBySession(sessionID string) (int, error) {
+	var userID int
+	var expiresStr string
+	query := `SELECT user_id, expires_at FROM sessions WHERE session_id = ?;`
+	err := DB.QueryRow(query, sessionID).Scan(&userID, &expiresStr)
+	if err != nil {
+		return 0, err
+	}
+	exp, err := time.Parse("2006-01-02 15:04:05", expiresStr)
+	if err != nil {
+		return 0, err
+	}
+	if time.Now().After(exp) {
+		_ = DeleteSession(sessionID)
+		return 0, fmt.Errorf("session expirée")
+	}
+	return userID, nil
+}
+
+// DeleteSession supprime une session côté serveur.
+func DeleteSession(sessionID string) error {
+	_, err := DB.Exec(`DELETE FROM sessions WHERE session_id = ?;`, sessionID)
+	return err
 }

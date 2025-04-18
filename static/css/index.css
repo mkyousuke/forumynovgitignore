@@ -1,5 +1,11 @@
 @import url('/static/css/main.css');
 
+/* === Forcer tout le texte de la page en blanc === */
+body,
+body * {
+  color: #fff !important;
+}
+
 @layer base {
   :root {
     --primary: #e74c3c;

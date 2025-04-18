@@ -78,7 +78,21 @@ func DeleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "ID de post manquant", http.StatusBadRequest)
 		return
 	}
-	err = database.DeleteComment(commentID, userID)
+
+	// Récupérer les informations sur l'utilisateur (incluant le rôle)
+	user, err := database.GetUserWithRole(userID)
+	if err != nil {
+		http.Error(w, "Utilisateur non trouvé", http.StatusUnauthorized)
+		return
+	}
+
+	// Si l'utilisateur est admin ou modérateur, il peut supprimer n'importe quel commentaire
+	if user.Role == "admin" || user.Role == "moderator" {
+		err = database.AdminDeleteComment(commentID)
+	} else {
+		err = database.DeleteComment(commentID, userID)
+	}
+
 	if err != nil {
 		http.Error(w, "Erreur lors de la suppression du commentaire: "+err.Error(), http.StatusInternalServerError)
 		return

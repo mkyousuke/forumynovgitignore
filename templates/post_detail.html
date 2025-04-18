@@ -10,7 +10,8 @@
   <body>
     <header>
       <button id="theme-toggle" aria-label="Changer de thème">🌙</button>
-      <a href="/profil" id="profil-link">
+      <!-- Le lien vers le profil affiche ici le profil de l'auteur du post -->
+      <a href="/profil?id={{.Post.UserID}}" id="profil-link">
         <img src="/static/images/profil/{{.UserPhoto}}" alt="Profil">
       </a>
       <h1>Post : {{.Post.Title}}</h1>
@@ -20,7 +21,7 @@
       <article>
         <p class="post-author">
           <img class="profile-icon" src="/static/images/profil/{{.UserPhoto}}" alt="Profil de {{.Post.Username}}">
-          <strong>Auteur :</strong> {{.Post.Username}}
+          <strong>Auteur :</strong> <a href="/profil?id={{.Post.UserID}}">{{.Post.Username}}</a>
         </p>
         <p><strong>Créé le :</strong> {{.Post.CreatedAt.Format "02/01/2006"}} à {{.Post.CreatedAt.Format "15:04:05"}}</p>
         {{ if .Post.ImagePath }}
@@ -56,6 +57,11 @@
           <button type="submit" class="emoji-btn" title="Dislike">👎</button>
         </form>
         <span class="like-dislike-count">{{.Post.Dislikes}}</span>
+        <!-- Bouton de signalement du post -->
+        <form action="/report-post" method="post" style="display:inline; margin-left:10px;">
+          <input type="hidden" name="post_id" value="{{.Post.ID}}">
+          <button type="submit" class="btn" onclick="return confirm('Voulez-vous signaler ce post ?');">Signaler</button>
+        </form>
       </div>
 
       <div class="comment-section">
@@ -64,7 +70,11 @@
           <div class="comment">
             <div class="comment-header">
               <img class="profile-icon" src="/static/images/profil/{{.Photo}}" alt="Profil de {{.Username}}">
-              <p><strong>{{.Username}}</strong> – {{.CreatedAt.Format "02/01/2006 15:04:05"}}</p>
+              <p>
+                <strong>
+                  <a href="/profil?id={{.UserID}}">{{.Username}}</a>
+                </strong> – {{.CreatedAt.Format "02/01/2006 15:04:05"}}
+              </p>
             </div>
             <p>{{.Content}}</p>
             <div class="comment-actions">
@@ -98,7 +108,7 @@
     </main>
 
     <footer>
-      <p>© 2025 CinéForum – Tous droits réservés</p>
+      <p>©2025 CinéForum – Tous droits réservés</p>
     </footer>
 
     <script>

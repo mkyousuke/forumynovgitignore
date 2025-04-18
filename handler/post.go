@@ -32,8 +32,7 @@ func NewPostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		t.Execute(w, nil)
 	case http.MethodPost:
-		err := r.ParseMultipartForm(10 << 20)
-		if err != nil {
+		if err := r.ParseMultipartForm(10 << 20); err != nil {
 			http.Error(w, "Erreur lors du traitement du formulaire", http.StatusBadRequest)
 			return
 		}
@@ -44,8 +43,7 @@ func NewPostHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var imagePath string
-		file, fileHeader, err := r.FormFile("image")
-		if err == nil {
+		if file, fileHeader, err := r.FormFile("image"); err == nil {
 			defer file.Close()
 			uploadDir := filepath.Join("static", "uploads")
 			if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
@@ -58,32 +56,26 @@ func NewPostHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			defer dst.Close()
-			_, err = io.Copy(dst, file)
-			if err != nil {
+			if _, err := io.Copy(dst, file); err != nil {
 				http.Error(w, "Erreur lors de l'enregistrement de l'image", http.StatusInternalServerError)
 				return
 			}
 		}
-		err = database.CreatePost(userID, title, content, imagePath)
-		if err != nil {
+		if err := database.CreatePost(userID, title, content, imagePath); err != nil {
 			http.Error(w, fmt.Sprintf("Erreur lors de la création du post: %v", err), http.StatusInternalServerError)
 			return
 		}
 
-		// Récupère l'utilisateur avec son rôle et le dernier post créé.
-		user, errUser := database.GetUserWithRole(userID)
-		if errUser == nil {
-			lastPost, errLast := database.GetLastPostForUser(userID)
-			if errLast == nil {
+		// Notifications
+		if user, errUser := database.GetUserWithRole(userID); errUser == nil {
+			if lastPost, errLast := database.GetLastPostForUser(userID); errLast == nil {
 				if user.Role == "admin" || user.Role == "moderator" {
 					msg := fmt.Sprintf("Votre post \"%s\" a bien été publié.", title)
 					_ = database.CreateNotification(userID, msg, lastPost.ID, 0)
 				} else {
 					msg := fmt.Sprintf("Votre post \"%s\" a été soumis à vérification.", title)
 					_ = database.CreateNotification(userID, msg, lastPost.ID, 0)
-					// Notifie également tous les admins et modos pour vérification.
-					mods, errMods := database.GetModeratorsAndAdmins()
-					if errMods == nil {
+					if mods, errMods := database.GetModeratorsAndAdmins(); errMods == nil {
 						for _, mod := range mods {
 							msgMod := fmt.Sprintf("Nouveau post \"%s\" en attente de vérification.", title)
 							_ = database.CreateNotification(mod.ID, msgMod, lastPost.ID, 0)
@@ -107,18 +99,14 @@ func PostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	data := struct {
 		Posts []database.Post
-	}{
-		Posts: posts,
-	}
+	}{Posts: posts}
 	t, err := template.ParseFiles(filepath.Join("templates", "posts.html"))
 	if err != nil {
 		http.Error(w, "Erreur interne du serveur (template): "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = t.Execute(w, data)
-	if err != nil {
+	if err := t.Execute(w, data); err != nil {
 		http.Error(w, "Erreur lors de l'affichage des posts: "+err.Error(), http.StatusInternalServerError)
-		return
 	}
 }
 
@@ -138,30 +126,35 @@ func PostDetailHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Post introuvable: "+err.Error(), http.StatusNotFound)
 		return
 	}
+
 	var editable bool
-	var userPhoto string = "profil.png"
-	cookie, err := r.Cookie("user_id")
-	if err == nil {
-		userID, errConv := strconv.Atoi(cookie.Value)
-		if errConv == nil {
-			if userID == post.UserID {
-				editable = true
-			}
-			user, errUser := database.GetUserByID(userID)
-			if errUser == nil && user.Photo != "" {
-				userPhoto = user.Photo
+	userPhoto := "profil.png"
+	if cookie, err := r.Cookie("user_id"); err == nil {
+		if uid, errConv := strconv.Atoi(cookie.Value); errConv == nil {
+			if uwr, errUwr := database.GetUserWithRole(uid); errUwr == nil {
+				if uid == post.UserID || uwr.Role == "admin" || uwr.Role == "moderator" {
+					editable = true
+				}
+				if uwr.Photo != "" {
+					userPhoto = uwr.Photo
+				}
+			} else if u, errU := database.GetUserByID(uid); errU == nil && u.Photo != "" {
+				userPhoto = u.Photo
 			}
 		}
 	}
+
 	comments, err := database.GetCommentsByPostID(post.ID)
 	if err != nil {
 		http.Error(w, "Erreur lors de la récupération des commentaires: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	modified := false
 	if !post.ModifiedAt.IsZero() && post.OriginalContent != "" && post.OriginalContent != post.Content {
 		modified = true
 	}
+
 	data := struct {
 		Post      database.Post
 		Editable  bool
@@ -175,15 +168,14 @@ func PostDetailHandler(w http.ResponseWriter, r *http.Request) {
 		UserPhoto: userPhoto,
 		Modified:  modified,
 	}
+
 	t, err := template.ParseFiles(filepath.Join("templates", "post_detail.html"))
 	if err != nil {
 		http.Error(w, "Erreur interne du serveur (template): "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = t.Execute(w, data)
-	if err != nil {
+	if err := t.Execute(w, data); err != nil {
 		http.Error(w, "Erreur lors de l'affichage du post: "+err.Error(), http.StatusInternalServerError)
-		return
 	}
 }
 
@@ -209,7 +201,6 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Récupère le rôle de l'utilisateur connecté.
 	user, err := database.GetUserWithRole(userID)
 	if err != nil {
 		http.Error(w, "Utilisateur non trouvé", http.StatusUnauthorized)
@@ -267,8 +258,7 @@ func EditPostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		t.Execute(w, post)
 	} else if r.Method == http.MethodPost {
-		err := r.ParseMultipartForm(10 << 20)
-		if err != nil {
+		if err := r.ParseMultipartForm(10 << 20); err != nil {
 			http.Error(w, "Erreur lors du traitement du formulaire", http.StatusBadRequest)
 			return
 		}
@@ -287,8 +277,7 @@ func EditPostHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var imagePath string
-		file, fileHeader, err := r.FormFile("image")
-		if err == nil {
+		if file, fileHeader, err := r.FormFile("image"); err == nil {
 			defer file.Close()
 			uploadDir := filepath.Join("static", "uploads")
 			if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
@@ -301,19 +290,16 @@ func EditPostHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			defer dst.Close()
-			_, err = io.Copy(dst, file)
-			if err != nil {
+			if _, err := io.Copy(dst, file); err != nil {
 				http.Error(w, "Erreur lors de l'enregistrement de l'image", http.StatusInternalServerError)
 				return
 			}
 		} else {
-			existingPost, err := database.GetPostByID(postID)
-			if err == nil {
+			if existingPost, err := database.GetPostByID(postID); err == nil {
 				imagePath = existingPost.ImagePath
 			}
 		}
-		err = database.UpdatePost(postID, userID, title, content, imagePath)
-		if err != nil {
+		if err := database.UpdatePost(postID, userID, title, content, imagePath); err != nil {
 			http.Error(w, "Erreur lors de la mise à jour du post: "+err.Error(), http.StatusInternalServerError)
 			return
 		}

@@ -1,0 +1,98 @@
+/* /static/css/admin.css */
+/* Import du style de base pour récupérer les variables et reset */
+@import url('/static/css/main.css');
+
+/* 1) Base – tout le texte en blanc */
+@layer base {
+  body,
+  main,
+  header,
+  h1, h2, h3, h4, h5, h6,
+  p, th, td, label, input,
+  a, .btn {
+    color: #fff !important;
+  }
+}
+
+/* 2) Composants admin */
+@layer components {
+  /* Glassmorphism sur le conteneur principal */
+  main {
+    width: min(100% - 2rem, 900px);
+    margin: 2rem auto;
+    padding: var(--spacing);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, var(--shadow-strength));
+  }
+
+  /* 2a) Header centré pour admin */
+  header {
+    text-align: center;
+    /* si header était flex, on le neutralise */
+    display: block !important;
+    padding: var(--spacing) 0;
+  }
+  header h1,
+  header p,
+  header a {
+    margin: 0.5rem auto;
+  }
+  header a {
+    text-decoration: none;
+    border-bottom: 1px solid var(--text-light);
+    padding-bottom: 2px;
+  }
+
+  /* 2b) Styles pour moderation.html */
+  main article {
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.1);
+    padding: var(--spacing);
+    margin-bottom: var(--spacing);
+    border-radius: var(--radius);
+  }
+  main article form {
+    display: inline-block;
+    margin-right: var(--spacing);
+  }
+
+  /* 2c) Styles pour admin_users.html */
+  main table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--spacing);
+  }
+  main th,
+  main td {
+    border: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+  main th {
+    background: var(--primary);
+  }
+  main tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  main a.btn {
+    margin-right: var(--spacing);
+    padding: 0.25em 0.5em;
+    font-size: 0.9rem;
+  }
+}
+
+/* 3) Responsive */
+@media (max-width: 768px) {
+  main {
+    margin: 1rem auto;
+    padding: clamp(1rem, 2vw + 0.5rem, 1.5rem);
+  }
+  main table,
+  main article {
+    font-size: 0.9rem;
+  }
+}

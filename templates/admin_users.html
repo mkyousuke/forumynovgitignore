@@ -1,0 +1,60 @@
+{{/* templates/admin_users.html */}}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Admin – Gestion des utilisateurs</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+<link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+  <header>
+    <h1>Dashboard Admin</h1>
+    <p>Connecté en tant que : {{.Admin.Username}}</p>
+    <a href="/index">← Retour à l’accueil</a>
+  </header>
+
+  <main>
+    <h2>Gestion des rôles</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Utilisateur</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Users}}
+        <tr>
+          <td>{{.ID}}</td>
+          <td><a href="/profil?id={{.ID}}">{{.Username}}</a></td>
+          <td>{{.Email}}</td>
+          <td>{{.Role}}</td>
+          <td>
+            {{if eq .Role "user"}}
+              <form action="/admin/users/update" method="post" style="display:inline">
+                <input type="hidden" name="user_id" value="{{.ID}}">
+                <input type="hidden" name="action" value="promote">
+                <button type="submit">Promouvoir</button>
+              </form>
+            {{else if eq .Role "moderator"}}
+              <form action="/admin/users/update" method="post" style="display:inline">
+                <input type="hidden" name="user_id" value="{{.ID}}">
+                <input type="hidden" name="action" value="demote">
+                <button type="submit">Rétrograder</button>
+              </form>
+            {{else}}
+              <!-- Pas d'action pour les admins -->
+              –
+            {{end}}
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

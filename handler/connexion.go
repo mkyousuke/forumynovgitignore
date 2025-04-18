@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"forum/database"
-
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,20 +20,17 @@ func ConnexionHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Erreur interne du serveur", http.StatusInternalServerError)
 			return
 		}
-		err = t.Execute(w, nil)
-		if err != nil {
-			http.Error(w, "Erreur lors de l'affichage du template", http.StatusInternalServerError)
-		}
+		_ = t.Execute(w, nil)
+
 	case http.MethodPost:
 		identifier := r.FormValue("identifier")
 		password := r.FormValue("password")
 		if identifier == "" || password == "" {
-			http.Error(w, "Tous les champs sont requis", http.StatusBadRequest)
+			http.Error(w, "Tous les champs requis", http.StatusBadRequest)
 			return
 		}
 		var user database.User
 		var err error
-		// Si l'identifiant contient un "@" on considère que c'est un email, sinon un nom d'utilisateur
 		if strings.Contains(identifier, "@") {
 			user, err = database.GetUserByEmail(identifier)
 		} else {
@@ -42,19 +40,38 @@ func ConnexionHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Utilisateur introuvable", http.StatusUnauthorized)
 			return
 		}
-		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-		if err != nil {
+		if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 			http.Error(w, "Identifiants invalides", http.StatusUnauthorized)
 			return
 		}
-		cookie := http.Cookie{
+
+		// --- Création de la session ---
+		sessionID := uuid.NewString()
+		expiry := time.Now().Add(24 * time.Hour)
+		if err := database.CreateSession(sessionID, user.ID, expiry); err != nil {
+			http.Error(w, "Erreur création session", http.StatusInternalServerError)
+			return
+		}
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session_id",
+			Value:    sessionID,
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteLaxMode,
+			Expires:  expiry,
+		})
+
+		// Cookie user_id pour compatibilité
+		http.SetCookie(w, &http.Cookie{
 			Name:     "user_id",
 			Value:    strconv.Itoa(user.ID),
 			Path:     "/",
 			HttpOnly: true,
-		}
-		http.SetCookie(w, &cookie)
+		})
+
 		http.Redirect(w, r, "/index", http.StatusSeeOther)
+
 	default:
 		http.Error(w, "Méthode non supportée", http.StatusMethodNotAllowed)
 	}

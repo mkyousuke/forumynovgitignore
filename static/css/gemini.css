@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import url('/static/css/main.css');
+
+:root {
+  --header-height: 4rem;
+  --form-height: 4rem;
+  --primary: #e74c3c;
+  --background-chat: rgba(0,0,0,0.4);
+  --chat-radius: 12px;
+  --chat-spacing: 1rem;
+  --text-light: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  color: var(--text-light);
+  background: url('/static/images/background.jpg.webp') center/cover fixed;
+  position: relative;
+}
+
+/* Header fixe en haut */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: var(--header-height);
+  width: 100%;
+  z-index: 100;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+}
+
+header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 1rem;
+}
+
+/* Zone de chat défilante */
+#chat-container {
+  position: absolute;
+  top: var(--header-height);
+  bottom: var(--form-height);
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  padding: var(--chat-spacing);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--background-chat);
+}
+
+/* Bulles */
+.chat-message {
+  max-width: 75%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--chat-radius);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  /* marge pour ne pas toucher les bords */
+  margin: 0 var(--chat-spacing);
+}
+
+.chat-message.user {
+  align-self: flex-end;
+  background: rgba(255,255,255,0.2);
+}
+
+.chat-message.bot {
+  align-self: flex-start;
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Markdown à l’intérieur */
+.chat-message strong { font-weight: 600; }
+.chat-message em     { font-style: italic; }
+.chat-message ul,
+.chat-message ol     { margin: 0.5rem 0 0.5rem 1rem; }
+.chat-message li     { margin-bottom: 0.25rem; }
+.chat-message a      { color: #fff; text-decoration: underline; }
+
+/* Formulaire fixé en bas */
+#chat-form {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--form-height);
+  padding: 0.5rem 1rem;
+  background: var(--background-chat);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 100;
+}
+
+#chat-form input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: var(--chat-radius);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+#chat-form input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+#chat-form button {
+  padding: 0 1.5rem;
+  border: none;
+  border-radius: var(--chat-radius);
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#chat-form button:hover {
+  background: #c0392b;
+}
+
+/* Scrollbar discrète */
+#chat-container::-webkit-scrollbar {
+  width: 8px;
+}
+#chat-container::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.3);
+  border-radius: 4px;
+}
+#chat-container::-webkit-scrollbar-track {
+  background: transparent;
+}

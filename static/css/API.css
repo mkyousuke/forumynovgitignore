@@ -4,6 +4,11 @@ body.api-page {
     background-size: cover;
 }
 
+body.api-page * {
+  color: #fff !important;
+}
+
+
 /* HEADER */
 header {
     position: relative;
@@ -100,7 +105,7 @@ main {
 
 /* FOOTER */
 footer {
-    background: rgba(44, 62, 80, 0.75);
+    background: transparent !important;
     color: #fff;
     text-align: center;
     padding: 1rem;

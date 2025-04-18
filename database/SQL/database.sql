@@ -89,4 +89,11 @@ CREATE TABLE IF NOT EXISTS posts (
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
--- Les autres tables restent inchangées...
+-- Table des sessions serveur
+CREATE TABLE IF NOT EXISTS sessions (
+    session_id   TEXT PRIMARY KEY,
+    user_id      INTEGER NOT NULL,
+    created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    expires_at   DATETIME NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);

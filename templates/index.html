@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -14,10 +15,8 @@
         color: #fff;
         font-family: 'Segoe UI', sans-serif;
       }
-      
       header {
         position: relative;
-        /* Fond transparent pour header */
         background: transparent !important;
         color: #fff;
         padding: 20px;
@@ -25,8 +24,6 @@
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
       }
-      
-      /* Boutons d'icônes dans le header */
       #theme-toggle {
         position: absolute;
         top: 20px;
@@ -41,7 +38,6 @@
       #theme-toggle:hover {
         transform: scale(1.1);
       }
-      
       #notif-link {
         position: absolute;
         top: 20px;
@@ -57,8 +53,6 @@
       #notif-link:hover {
         transform: scale(1.1);
       }
-      
-      /* Bouton Profil ou Accueil selon l'état de connexion */
       #profil-button {
         position: absolute;
         top: 20px;
@@ -80,8 +74,8 @@
       }
       #profil-button img {
         display: block;
-        width: 60px;  
-        height: 60px; 
+        width: 60px;
+        height: 60px;
         object-fit: cover;
         border-radius: 50%;
         transition: transform 0.2s ease;
@@ -89,8 +83,6 @@
       #profil-button:hover img {
         transform: scale(1.05);
       }
-      
-      /* --- Conteneur principal en glassmorphism --- */
       .container {
         max-width: 1200px;
         margin: 20px auto;
@@ -101,22 +93,18 @@
         border-radius: var(--radius);
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
       }
-      
       .auth-buttons {
         display: flex;
         justify-content: flex-end;
         gap: 10px;
         margin-bottom: 20px;
       }
-      
-      /* --- Grid et cartes de catégories --- */
       .category-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 20px;
         margin-top: 20px;
       }
-      
       .category-card {
         background: rgba(245, 245, 245, 0.25);
         border-radius: 8px;
@@ -137,7 +125,6 @@
       .category-card p {
         color: #ddd;
       }
-      
       .btn {
         display: inline-block;
         padding: 8px 16px;
@@ -152,9 +139,52 @@
       .btn:hover {
         background-color: #c0392b;
       }
-      
+      .recent-posts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+      .post-card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .post-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      }
+      .post-card h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.25rem;
+      }
+      .post-card time {
+        font-size: 0.85rem;
+        color: #ccc;
+        margin-bottom: 0.75rem;
+      }
+      .post-card p {
+        flex: 1;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        margin-bottom: 1rem;
+      }
+      .post-card .btn {
+        align-self: flex-start;
+        padding: 0.5rem 1rem;
+        background-color: #e74c3c;
+      }
+      .post-card .btn:hover {
+        background-color: #c0392b;
+      }
       footer {
-        /* Fond transparent pour footer */
         background: transparent;
         color: white;
         text-align: center;
@@ -163,8 +193,6 @@
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
       }
-      
-      /* --- Mode sombre --- */
       body.dark-mode {
         background: url('/static/images/background-sombre.jpeg') no-repeat center center fixed;
         background-size: cover;
@@ -191,7 +219,6 @@
       body.dark-mode .btn:hover {
         background-color: #333;
       }
-      
       @media (max-width: 768px) {
         .container {
           padding: 0 1rem;
@@ -203,10 +230,10 @@
     <header>
       {{ if .IsLoggedIn }}
         <a href="/profil" id="profil-button">
-          <img src="/static/images/profil/{{.UserPhoto}}" alt="Profil">
+          <img src="{{.PhotoURL}}" alt="Profil">
         </a>
       {{ else }}
-        <a href="/profil" id="profil-button" class="btn">Profil</a>
+        <a href="/connexion" id="profil-button" class="btn">Profil</a>
       {{ end }}
       <h1>CinéForum</h1>
       <p>La communauté des passionnés de séries et films</p>
@@ -218,15 +245,15 @@
     
     <main class="container">
       {{ if not .IsLoggedIn }}
-      <div class="auth-buttons">
-        <a href="/connexion" class="btn">Connexion</a>
-        <a href="/inscription" class="btn">Inscription</a>
-        <a href="/nouveau-post" class="btn">Créer Post</a>
-      </div>
+        <div class="auth-buttons">
+          <a href="/connexion" class="btn">Connexion</a>
+          <a href="/inscription" class="btn">Inscription</a>
+          <a href="/nouveau-post" class="btn">Nouveau post</a>
+        </div>
       {{ else }}
-      <div class="auth-buttons">
-        <a href="/nouveau-post" class="btn">Créer Post</a>
-      </div>
+        <div class="auth-buttons">
+          <a href="/nouveau-post" class="btn">Nouveau post</a>
+        </div>
       {{ end }}
       
       <section>
@@ -241,7 +268,11 @@
             <h3>Posts</h3>
             <p>Explorer les posts des différents utilisateurs.</p>
             <a href="/posts" class="btn">Explorer</a>
-            <a href="/theories-spoilers" class="btn">Théories &amp; Spoilers</a>
+            {{ if .IsLoggedIn }}
+              <a href="/gemini-chat" class="btn">Accède à l'IA</a>
+            {{ else }}
+              <a href="/connexion" class="btn">Accède à l'IA (connexion requise)</a>
+            {{ end }}
           </div>
           <div class="category-card">
             <h3>Actualités</h3>
@@ -258,7 +289,30 @@
       
       <section>
         <h2>Dernières discussions</h2>
-        <p>Fonctionnalité à venir - Les discussions les plus récentes et populaires s'afficheront ici.</p>
+        <div class="recent-posts-grid">
+          {{ if .RecentPosts }}
+            {{ range .RecentPosts }}
+              <article class="post-card">
+                <h3>
+                  <a href="/post?id={{.ID}}">{{ .Title }}</a>
+                </h3>
+                <time datetime="{{ .CreatedAt.Format "2006-01-02T15:04:05Z07:00" }}">
+                  {{ .CreatedAt.Format "02 Jan 2006" }}
+                </time>
+                <p>
+                  {{ if gt (len .Content) 150 }}
+                    {{ slice .Content 0 150 }}…
+                  {{ else }}
+                    {{ .Content }}
+                  {{ end }}
+                </p>
+                <a href="/post?id={{.ID}}" class="btn">Voir le post</a>
+              </article>
+            {{ end }}
+          {{ else }}
+            <p>Aucun post pour le moment.</p>
+          {{ end }}
+        </div>
       </section>
     </main>
     
@@ -266,7 +320,6 @@
       <p>© 2025 CinéForum - Tous droits réservés</p>
     </footer>
     
-    <!-- Scripts de notifications et gestion du thème -->
     <script>
       const notifIcon = document.querySelector('#notif-link img');
       function checkNotifications() {
@@ -281,7 +334,8 @@
       }
       setInterval(checkNotifications, 30000);
       checkNotifications();
-    </script>    
+    </script>
+    
     <script>
       const toggleBtn = document.getElementById('theme-toggle');
       const body = document.body;

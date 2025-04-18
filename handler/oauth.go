@@ -3,8 +3,10 @@ package handler
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"forum/database"
+	"github.com/google/uuid"
 	"github.com/markbates/goth/gothic"
 )
 
@@ -21,26 +23,33 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	dbUser, err := database.GetUserByEmail(user.Email)
 	if err != nil {
-		err = database.CreateUser(user.Name, user.Email, "oauth")
-		if err != nil {
-			http.Redirect(w, r, "/connexion", http.StatusTemporaryRedirect)
-			return
-		}
-		dbUser, err = database.GetUserByEmail(user.Email)
-		if err != nil {
-			http.Redirect(w, r, "/connexion", http.StatusTemporaryRedirect)
-			return
-		}
+		_ = database.CreateUser(user.Name, user.Email, "oauth")
+		dbUser, _ = database.GetUserByEmail(user.Email)
 	}
-	cookie := http.Cookie{
+	// Création session
+	sessionID := uuid.NewString()
+	expiry := time.Now().Add(24 * time.Hour)
+	_ = database.CreateSession(sessionID, dbUser.ID, expiry)
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  expiry,
+	})
+	// Compatibilité user_id
+	http.SetCookie(w, &http.Cookie{
 		Name:     "user_id",
 		Value:    strconv.Itoa(dbUser.ID),
 		Path:     "/",
 		HttpOnly: true,
-	}
-	http.SetCookie(w, &cookie)
+	})
 	http.Redirect(w, r, "/profil", http.StatusTemporaryRedirect)
 }
+
+// Même logique pour Facebook, Github et Twitter :
 
 func FacebookAuthHandler(w http.ResponseWriter, r *http.Request) {
 	r.URL.RawQuery = "provider=facebook"
@@ -55,24 +64,27 @@ func FacebookCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	dbUser, err := database.GetUserByEmail(user.Email)
 	if err != nil {
-		err = database.CreateUser(user.Name, user.Email, "oauth")
-		if err != nil {
-			http.Redirect(w, r, "/connexion", http.StatusTemporaryRedirect)
-			return
-		}
-		dbUser, err = database.GetUserByEmail(user.Email)
-		if err != nil {
-			http.Redirect(w, r, "/connexion", http.StatusTemporaryRedirect)
-			return
-		}
+		_ = database.CreateUser(user.Name, user.Email, "oauth")
+		dbUser, _ = database.GetUserByEmail(user.Email)
 	}
-	cookie := http.Cookie{
+	sessionID := uuid.NewString()
+	expiry := time.Now().Add(24 * time.Hour)
+	_ = database.CreateSession(sessionID, dbUser.ID, expiry)
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  expiry,
+	})
+	http.SetCookie(w, &http.Cookie{
 		Name:     "user_id",
 		Value:    strconv.Itoa(dbUser.ID),
 		Path:     "/",
 		HttpOnly: true,
-	}
-	http.SetCookie(w, &cookie)
+	})
 	http.Redirect(w, r, "/profil", http.StatusTemporaryRedirect)
 }
 
@@ -89,29 +101,31 @@ func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	dbUser, err := database.GetUserByEmail(user.Email)
 	if err != nil {
-		err = database.CreateUser(user.Name, user.Email, "oauth")
-		if err != nil {
-			http.Redirect(w, r, "/connexion", http.StatusTemporaryRedirect)
-			return
-		}
-		dbUser, err = database.GetUserByEmail(user.Email)
-		if err != nil {
-			http.Redirect(w, r, "/connexion", http.StatusTemporaryRedirect)
-			return
-		}
+		_ = database.CreateUser(user.Name, user.Email, "oauth")
+		dbUser, _ = database.GetUserByEmail(user.Email)
 	}
-	cookie := http.Cookie{
+	sessionID := uuid.NewString()
+	expiry := time.Now().Add(24 * time.Hour)
+	_ = database.CreateSession(sessionID, dbUser.ID, expiry)
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  expiry,
+	})
+	http.SetCookie(w, &http.Cookie{
 		Name:     "user_id",
 		Value:    strconv.Itoa(dbUser.ID),
 		Path:     "/",
 		HttpOnly: true,
-	}
-	http.SetCookie(w, &cookie)
+	})
 	http.Redirect(w, r, "/profil", http.StatusTemporaryRedirect)
 }
 
 func TwitterAuthHandler(w http.ResponseWriter, r *http.Request) {
-	// Pour Twitter, il faut préciser le provider dans la query
 	r.URL.RawQuery = "provider=twitter"
 	gothic.BeginAuthHandler(w, r)
 }
@@ -122,28 +136,28 @@ func TwitterCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/connexion", http.StatusTemporaryRedirect)
 		return
 	}
-	
 	dbUser, err := database.GetUserByEmail(user.Email)
 	if err != nil {
-		// Si l'utilisateur n'existe pas, on le crée
-		err = database.CreateUser(user.Name, user.Email, "oauth")
-		if err != nil {
-			http.Redirect(w, r, "/connexion", http.StatusTemporaryRedirect)
-			return
-		}
-		dbUser, err = database.GetUserByEmail(user.Email)
-		if err != nil {
-			http.Redirect(w, r, "/connexion", http.StatusTemporaryRedirect)
-			return
-		}
+		_ = database.CreateUser(user.Name, user.Email, "oauth")
+		dbUser, _ = database.GetUserByEmail(user.Email)
 	}
-	
-	cookie := http.Cookie{
+	sessionID := uuid.NewString()
+	expiry := time.Now().Add(24 * time.Hour)
+	_ = database.CreateSession(sessionID, dbUser.ID, expiry)
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  expiry,
+	})
+	http.SetCookie(w, &http.Cookie{
 		Name:     "user_id",
 		Value:    strconv.Itoa(dbUser.ID),
 		Path:     "/",
 		HttpOnly: true,
-	}
-	http.SetCookie(w, &cookie)
+	})
 	http.Redirect(w, r, "/profil", http.StatusTemporaryRedirect)
 }
